@@ -177,3 +177,77 @@ Problème de démarrage de `td-front`
 - Des Dockerfiles multi‑étapes et des images légères, avec au moins un service non‑root (API).
 
 Les principales difficultés ont été liées aux détails des builds Node (lockfile) et à la gestion des permissions Nginx / healthchecks, et ont été résolues de manière adaptée au contexte du TD.
+
+1. Principales commandes utilisées
+Docker / Docker Compose
+Lancer la stack avec build des images :
+docker compose up --build
+
+Lancer en arrière-plan :
+docker compose up -d
+
+Arrêter et supprimer les conteneurs :
+docker compose down
+
+Arrêter et supprimer aussi les volumes (réinitialiser la base) :
+docker compose down -v
+
+Voir l’état des services :
+docker compose ps
+
+Voir les logs d’un service :
+docker compose logs api
+docker compose logs front
+docker compose logs db
+
+Vérifier la configuration Compose :
+docker compose config
+
+Lancer seulement un service :
+docker compose up front
+docker compose up api
+
+Lister toutes les images :
+docker images
+
+Lancer un conteneur spécifique manuellement (si besoin) :
+docker start td-front
+docker start td-api
+
+Node / npm (côté API)
+Installation des dépendances et génération du lockfile :
+cd api
+npm install
+
+Lancement des tests (dans l’image de build ou localement si défini) :
+npm test
+
+2. Arborescence du projet :
+
+text
+TD-doc/
+├── api/
+│   ├── Dockerfile
+│   ├── .dockerignore
+│   ├── package.json
+│   ├── package-lock.json
+│   └── src/
+│       ├── index.js        # Routes /status, /items, /health
+│       └── db.js           # Connexion PostgreSQL via variables d'env
+│
+├── db/
+│   └── init.sql            # Création table items + données d'exemple
+│
+├── front/
+│   ├── Dockerfile
+│   ├── .dockerignore
+│   ├── nginx.conf          # Nginx + reverse proxy /api -> api:3000
+│   └── src/
+│       ├── index.html      # Page HTML affichant la liste des items
+│       └── app.js          # Appels fetch vers /api/status et /api/items
+│
+├── docker-compose.yml      # Définition services db, api, front
+├── .env                    # DB_USER, DB_PASSWORD, DB_NAME, API_PORT
+├── scripts/
+│   └── build_and_deploy.sh # Script d'automatisation (build, push, déploiement)
+└── RAPPORT.txt / RAPPORT.md # Rapport du TD
