@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 set -euo pipefail
 
 REGISTRY="${REGISTRY:-your-registry.example.com}"
@@ -12,12 +11,6 @@ docker compose config > /dev/null
 
 docker build -t "$IMAGE_API" ./api
 docker build -t "$IMAGE_FRONT" ./front
-
-# docker scan "$IMAGE_API"
-# docker scan "$IMAGE_FRONT"
-# export DOCKER_CONTENT_TRUST=1
-# docker push "$IMAGE_API"
-# docker push "$IMAGE_FRONT"
 
 docker login "$REGISTRY"
 docker push "$IMAGE_API"
